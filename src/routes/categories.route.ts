@@ -6,4 +6,4 @@ export const categoiresRouter = Router();
 
 const controller = new CategoriesController();
 
-categoiresRouter.get('/', controller.create);
+categoiresRouter.post('/', controller.create);
