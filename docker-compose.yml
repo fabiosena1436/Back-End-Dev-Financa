@@ -1,4 +1,4 @@
-version: '3'
+version: '3.9'
 
 services:
   mongo:
@@ -6,7 +6,7 @@ services:
     restart: always
     image: mongo
     environment:
-     MONGO_INITDB_ROOT_USERNAME: 'devbills-local'
+     MONGO_INITDB_ROOT_USERNAME: 'devbills'
      MONGO_INITDB_ROOT_PASSWORD: 'pass1436'
     ports:
       - '27017:27017'
