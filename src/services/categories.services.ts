@@ -6,7 +6,11 @@ export class CategoriesServices {
   constructor(private categoriesRepository: CategoriesRepository) {}
 
   async create({ title, color }: CreateCategoyDTO): Promise<Category> {
-    
+    const foundCategory = await this.categoriesRepository.findByTitle(title);
+
+    if (foundCategory) {
+      throw new Error('Category already exist.');
+    }
     const category = new Category({
       title,
       color,
