@@ -1,6 +1,8 @@
 import { CategoriesRepository } from './../database/repositories/categories.repositories';
 import { Category } from '../entities/category.intity';
 import { CreateCategoyDTO } from '../dtos/categories.dto';
+import { AppError } from '../errors/app.errors';
+import { StatusCodes } from 'http-status-codes';
 
 export class CategoriesServices {
   constructor(private categoriesRepository: CategoriesRepository) {}
@@ -9,7 +11,7 @@ export class CategoriesServices {
     const foundCategory = await this.categoriesRepository.findByTitle(title);
 
     if (foundCategory) {
-      throw new Error('Category already exist.');
+      throw new AppError('Category already exist.', StatusCodes.BAD_REQUEST);
     }
     const category = new Category({
       title,
