@@ -18,7 +18,7 @@ import mongoose from 'mongoose';
 export async function setupMongo(): Promise<void> {
   try {
     if (mongoose.connection.readyState === 1) {
-      console.log('Database already connected');
+      console.log('Database already connected')
       return;
     }
     console.log('Connecting to DB...');

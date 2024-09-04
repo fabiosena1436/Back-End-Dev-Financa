@@ -5,7 +5,7 @@ import { setupMongo } from './database';
 import { errorHandler } from './middlewares/error-handdler.middleware';
 
 setupMongo().then(() => {
-  const app = express();
+  const app = express()
 
   app.use(json());
   app.use(routes);

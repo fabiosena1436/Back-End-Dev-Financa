@@ -7,7 +7,7 @@
     "standard",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommend"
+    "plugin:prettier/recommended"
   ],
   "overrides": [],
   "parser": "@typescript-eslint/parser",
@@ -24,7 +24,7 @@
     "prettier/prettier": "error",
     "no-useless-constructor": "off",
     "@typescript-eslint/no-unused-vars": "off",
-    "import-helpers/order-import": [
+    "import-helpers/order-imports": [
       "warn",
       {
         "newlineBetween": "always",
