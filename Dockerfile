@@ -10,3 +10,5 @@ EXPOSE 3333
 
 CMD [ "npm", "run", "dev" ]
 
+
+# docker logs devbills-api --follow

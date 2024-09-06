@@ -1,4 +1,4 @@
-import { Category } from '../../entities/category.intity';
+import { Category } from '../../entities/category.entity';
 import { CategoryModel } from '../schemas/category.schema';
 
 export class CategoriesRepository {

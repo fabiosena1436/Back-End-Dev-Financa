@@ -1,5 +1,5 @@
 import { CategoriesRepository } from './../database/repositories/categories.repositories';
-import { Category } from '../entities/category.intity';
+import { Category } from '../entities/category.entity';
 import { CreateCategoyDTO } from '../dtos/categories.dto';
 import { AppError } from '../errors/app.errors';
 import { StatusCodes } from 'http-status-codes';
