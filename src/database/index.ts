@@ -14,3 +14,4 @@ export async function setupMongo(): Promise<void> {
 }
 
 
+// docker logs devbills-api --follow

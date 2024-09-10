@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express, { json } from 'express';
 import { routes } from './routes';
-import { setupMongo } from './dtos';
+import { setupMongo } from './database';
 import { errorHandler } from './middlewares/error-handdler.middleware';
 
 setupMongo().then(() => {
