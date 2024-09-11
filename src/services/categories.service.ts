@@ -1,11 +1,11 @@
-import { CategoriesRepository } from './../database/repositories/categories.repositories';
+import { CategoriesRepository } from '../database/repositories/categories.repositories';
 import { Category } from '../entities/category.entity';
 import { CreateCategoyDTO } from '../dtos/categories.dto';
 import { AppError } from '../errors/app.errors';
 import { StatusCodes } from 'http-status-codes';
 
 export class CategoriesServices {
-  constructor(private categoriesRepository: CategoriesRepository) {}
+  constructor(private categoriesRepository: CategoriesRepository) { }
 
   async create({ title, color }: CreateCategoyDTO): Promise<Category> {
     const foundCategory = await this.categoriesRepository.findByTitle(title);
@@ -23,7 +23,7 @@ export class CategoriesServices {
     return createdCategory;
   }
 
-  async index(): Promise<Category[]>{
+  async index(): Promise<Category[]> {
     const categories = await this.categoriesRepository.index()
 
     return categories

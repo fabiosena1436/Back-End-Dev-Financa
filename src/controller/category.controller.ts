@@ -2,47 +2,40 @@ import { NextFunction, Request, Response } from 'express';
 
 import { CategoriesRepository } from '../database/repositories/categories.repositories';
 import { CategoryModel } from '../database/schemas/category.schema';
-import { CategoriesServices } from './../services/categories.services';
+import { CategoriesServices } from '../services/categories.service';
 import { CreateCategoyDTO } from '../dtos/categories.dto';
-import { z } from 'zod';
 import { StatusCodes } from 'http-status-codes';
 
 export class CategoriesController {
-  async create(
+  constructor(private catecoriesSevices: CategoriesServices) {
+
+  }
+
+  create = async (
     req: Request<unknown, unknown, CreateCategoyDTO>,
     res: Response,
     next: NextFunction,
-  ) {
+  ) => {
     try {
-      
-
-  
 
       const { color, title } = req.body;
+      const result = await this.catecoriesSevices.create({ color, title });
 
-      const respository = new CategoriesRepository(CategoryModel);
-      const service = new CategoriesServices(respository);
-
-      const result = await service.create({ color, title });
-
-      return res.status(201).json(result);
+      return res.status(StatusCodes.CREATED).json(result);
     } catch (err) {
       next(err);
     }
   }
 
-  async index(
-    req: Request,
+  index = async (
+    _: Request,
     res: Response,
     next: NextFunction,
-  ) {
+  ) => {
     try {
-      
 
-      const respository = new CategoriesRepository(CategoryModel);
-      const service = new CategoriesServices(respository);
 
-      const result = await service.index();
+      const result = await this.catecoriesSevices.index();
 
       return res.status(StatusCodes.OK).json(result);
     } catch (err) {
