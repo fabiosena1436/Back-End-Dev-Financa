@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { CategoriesRepository } from '../database/repositories/categories.repositories';
-import { CategoryModel } from '../database/schemas/category.schema';
+
 import { CategoriesServices } from '../services/categories.service';
 import { CreateCategoyDTO } from '../dtos/categories.dto';
 import { StatusCodes } from 'http-status-codes';
