@@ -1,10 +1,13 @@
 import { z } from "zod";
-import { TrasactionType } from "../entities/trasations.entity";
+import { TransactionType } from "../entities/trasations.entity";
 
-export const createTransactionsSchema = {
+export const createTransactionSchema = {
     title: z.string(),
-    amount: z.number().int().positive,
-    type: z.nativeEnum(TrasactionType),
-    data: z.coerce.date(),
-    categoryId: z.string()
+    amount: z.number().int().positive(),
+    type: z.nativeEnum(TransactionType),
+    date: z.coerce.date(),
+    categoryId: z.string().length(24)
 }
+
+const createTransacionObject = z.object(createTransactionSchema)
+export type CreateTransactionDTO = z.infer<typeof createTransacionObject>
