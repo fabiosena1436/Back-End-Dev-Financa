@@ -1,4 +1,5 @@
-import { optional, z } from "zod";
+
+import { z } from "zod";
 import { TransactionType } from "../entities/trasations.entity";
 
 export const createTransactionSchema = {
@@ -22,3 +23,13 @@ export const IndexTransactionsSchema = {
 
 const indexTransactionObject = z.object(IndexTransactionsSchema)
 export type indexTransactionsDTO = z.infer<typeof indexTransactionObject>
+
+export const getDaschboardSchema ={
+    beginDate: z.coerce.date().optional(),
+    endDate: z.coerce.date().optional(),
+}
+
+const getDashboardObject = z.object(getDaschboardSchema)
+export type GetDashBoarDTO = z.infer<typeof getDashboardObject>
+
+

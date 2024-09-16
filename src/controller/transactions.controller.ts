@@ -32,6 +32,8 @@ export class TransactionsController {
     }
   }
 
+
+  
   index = async (
     req: Request<unknown, unknown, unknown, indexTransactionsDTO>,
     res: Response,
@@ -39,7 +41,12 @@ export class TransactionsController {
   ) => {
     try {
       const { title, categoryId, beginDate, endDate } = req.query
-      const result = await this.transactionsSevices.index({ title, categoryId, beginDate, endDate });
+      const result = await this.transactionsSevices.index({ 
+        title, 
+        categoryId, 
+        beginDate, 
+        endDate 
+      });
 
       return res.status(StatusCodes.OK).json(result);
     } catch (err) {
