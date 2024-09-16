@@ -39,4 +39,9 @@ export class TransactionsService {
 
         return createdTransaction
     }
+    async index({filters: IndexTransactionsDTO}): Promise<Transaction[]>{
+        const transactions = await this.transactionsRepository.index(filters)
+
+        return transactions
+    }
 }

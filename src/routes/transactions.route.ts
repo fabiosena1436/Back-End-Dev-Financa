@@ -19,3 +19,6 @@ transactionRoutes.post(
 
 controller.create,
 );
+
+
+transactionRoutes.post('/', controller.index);

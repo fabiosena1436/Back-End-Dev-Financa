@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { StatusCodes } from 'http-status-codes';
 import { TransactionsService } from '../services/trasactions.service';
-import { CreateTransactionDTO } from '../dtos/trasactions.dto';
+import { CreateTransactionDTO, indexTransactionsDTO } from '../dtos/trasactions.dto';
 
 export class TransactionsController {
   constructor(private transactionsSevices: TransactionsService) {
@@ -27,6 +27,21 @@ export class TransactionsController {
       });
 
       return res.status(StatusCodes.CREATED).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  index = async (
+    req: Request<unknown, unknown, unknown, indexTransactionsDTO>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { title, categoryId, beginDate, endDate } = req.query
+      const result = await this.transactionsSevices.index({ title, categoryId, beginDate, endDate });
+
+      return res.status(StatusCodes.OK).json(result);
     } catch (err) {
       next(err);
     }
