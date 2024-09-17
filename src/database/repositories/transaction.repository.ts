@@ -1,3 +1,5 @@
+import { TransactionType } from './../../entities/trasations.entity';
+import { Expense } from './../../entities/expense.entiy';
 import { GetDashBoarDTO, indexTransactionsDTO } from './../../dtos/trasactions.dto';
 
 import { Transaction } from '../../entities/trasations.entity';
@@ -32,48 +34,97 @@ export class TransactionRepository {
       }
     }
 
-    const transactions = await this.model.find(whwreParams)
+    const transactions = await this.model.find(whwreParams, undefined, {
+      sort: {
+        date: -1,
+      }
+    })
 
-    const transactionsMap = transactions.map((item) => item.toObject<Transaction>())
+    const transactionsMap = transactions.map((item) =>
+      item.toObject<Transaction>()
+    )
 
     return transactionsMap
   }
 
   async getBalance({ beginDate, endDate }: GetDashBoarDTO): Promise<Balance> {
-    const [result] = await this.model.aggregate<Balance>().match({
-      date: {
-        $gte: beginDate,
-        $lte: endDate
-      }
-    }).project({
-      _id: 0,
-      income: {
-        $cond: [
-          {
-            $eq: ['$type', 'income'],
+    const agregate = this.model.aggregate<Balance>()
 
-          },
-          '$amount',
-          0,
-        ],
+    if (beginDate || endDate) {
+      agregate.match({
+        date: {
+          ...(beginDate && { $gte: beginDate }),
+          ...(endDate && { $lte: endDate }),
+        }
+      })
+    }
+
+    const [result] = await agregate
+
+      .project({
+        _id: 0,
+        income: {
+          $cond: [
+            {
+              $eq: ['$type', 'income'],
+
+            },
+            '$amount',
+            0,
+          ],
+        },
+        expense: {
+          $cond: [
+            {
+              $eq: ['$type', 'expense'],
+            },
+            '$amount',
+            0,
+          ],
+        },
+      }).group({
+        _id: null,
+        incomes: {
+          $sum: '$expense',
+        },
+      }).addFields({
+        balance: {
+          $subtract: ['$incomes', 'expense']
+        }
+      })
+    return result
+  }
+
+  async getExpense({
+    beginDate,
+    endDate
+  }: GetDashBoarDTO): Promise<Expense[]> {
+    const aggregate = this.model.aggregate<Expense>()
+    const matchParams: Record<string, unknown> = {
+      type: TransactionType.EXPENSE,
+    }
+
+    if (beginDate || endDate) {
+
+      matchParams.date = {
+
+        ...(beginDate && { $gte: beginDate }),
+        ...(endDate && { $lte: endDate }),
+
+      }
+
+    }
+
+    const result = await aggregate.match(matchParams).group({
+      _id: '$category._id',
+      title: {
+        $first: '$category.title'
       },
-      expense: {
-        $cond: [
-          {
-            $eq: ['$type', 'expense'],
-          },
-          '$amount',
-          0,
-        ],
+      color: {
+        $first: '$category.color',
       },
-    }).group({
-      _id: null,
-      incomes: {
-        $sum: '$expense',
-      },
-    }).addFields({
-      balance: {
-        $subtract: ['$incomes', 'expense']
+      amount: {
+        $sum: '$amount',
       }
     })
     return result

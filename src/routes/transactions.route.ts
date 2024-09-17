@@ -1,4 +1,4 @@
-import { createTransactionSchema } from './../dtos/trasactions.dto';
+import { createTransactionSchema, IndexTransactionsSchema, getDaschboardSchema } from './../dtos/trasactions.dto';
 import { TransactionsController } from './../controller/transactions.controller';
 import { Router } from 'express';
 import { ParamnsType, validator } from '../middlewares/validetor.middleware';
@@ -11,14 +11,31 @@ const controller = new TransactionsController(TransactionsFactory.getServiceInst
 
 
 transactionRoutes.post(
-    '/', 
+    '/',
     validator({
-    schema: createTransactionSchema,
-    type: ParamnsType.BODY
-}) ,
+        schema: createTransactionSchema,
+        type: ParamnsType.BODY
+    }),
 
-controller.create,
+    controller.create,
 );
 
 
-transactionRoutes.post('/', controller.index);
+transactionRoutes.get('/',
+    validator({
+        schema: IndexTransactionsSchema,
+        type: ParamnsType.BODY
+    }),
+
+    controller.index
+);
+
+transactionRoutes.get(
+    '/dashboard',
+    validator({
+        schema: getDaschboardSchema,
+        type: ParamnsType.BODY
+    }),
+
+    controller.getDashboard,
+);

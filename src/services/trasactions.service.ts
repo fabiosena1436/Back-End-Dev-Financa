@@ -1,4 +1,4 @@
-import { indexTransactionsDTO, getDashboardS, GetDashBoarDTO } from './../dtos/trasactions.dto';
+import { GetDashBoarDTO } from './../dtos/trasactions.dto';
 
 import { CategoriesRepository } from './../database/repositories/categories.repository';
 import { CreateTransactionDTO } from '../dtos/trasactions.dto';
@@ -8,6 +8,7 @@ import { Transaction } from './../entities/trasations.entity';
 import { AppError } from '../errors/app.errors';
 import { StatusCodes } from 'http-status-codes';
 import { Balance } from '../entities/balance.entuty';
+import { Expense } from '../entities/expense.entiy';
 
 
 export class TransactionsService {
@@ -48,8 +49,15 @@ export class TransactionsService {
         return transactions
     }
 
-    async getDashboard({ beginDate, endDate }: GetDashBoarDTO) {
+    async getDashboard({ beginDate, endDate }: GetDashBoarDTO): Promise<{ balance: Balance, expense: Expense[] }> {
+
+        
         let balance = await this.transactionsRepository.getBalance({
+            beginDate,
+            endDate,
+        })
+
+        const expense = await this.transactionsRepository.getExpense({
             beginDate,
             endDate,
         })
@@ -62,5 +70,10 @@ export class TransactionsService {
                 balance: 0,
             })
         }
+
+        return { balance, expense }
     }
+
+
+
 }

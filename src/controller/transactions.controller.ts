@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { StatusCodes } from 'http-status-codes';
 import { TransactionsService } from '../services/trasactions.service';
-import { CreateTransactionDTO, indexTransactionsDTO } from '../dtos/trasactions.dto';
+import { CreateTransactionDTO, GetDashBoarDTO, indexTransactionsDTO } from '../dtos/trasactions.dto';
 
 export class TransactionsController {
   constructor(private transactionsSevices: TransactionsService) {
@@ -54,4 +54,25 @@ export class TransactionsController {
     }
   }
 
+  getDashboard = async (
+    req: Request<unknown, unknown, unknown, GetDashBoarDTO>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const {  beginDate, endDate } = req.query
+      const result = await this.transactionsSevices.getDashboard({ 
+        
+        beginDate, 
+        endDate 
+      });
+  
+      return res.status(StatusCodes.OK).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
+
+
+
