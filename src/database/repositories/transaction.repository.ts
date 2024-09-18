@@ -1,6 +1,6 @@
 import { TransactionType } from './../../entities/trasations.entity';
 import { Expense } from './../../entities/expense.entiy';
-import { GetDashBoarDTO, indexTransactionsDTO } from './../../dtos/trasactions.dto';
+import { GetDashBoarDTO, indexTransactionsDTO, GetFinanceEvolutionDTO, GetFinancialEvolutionDTO } from './../../dtos/trasactions.dto';
 
 import { Transaction } from '../../entities/trasations.entity';
 import { TransactionModel } from './../schemas/trasactions.schema';
@@ -127,6 +127,63 @@ export class TransactionRepository {
         $sum: '$amount',
       }
     })
+    return result
+  }
+
+  async getFinancialEvolution({ year }: GetFinancialEvolutionDTO): Promise<Balance[]> {
+    const agregate = this.model.aggregate<Balance>()
+
+
+    const result = await agregate
+      .match({
+        date: {
+          $gte: new Date(`${year}-01-01`),
+          $lte: new Date(`${year}-12-31`),
+        }
+      })
+      .project({
+        _id: 0,
+        income: {
+          $cond: [
+            {
+              $eq: ['$type', 'income'],
+
+            },
+            '$amount',
+            0,
+          ],
+        },
+        expense: {
+          $cond: [
+            {
+              $eq: ['$type', 'expense'],
+            },
+            '$amount',
+            0,
+          ],
+        },
+
+        year: {
+          $year: '$date'
+        },
+        month: {
+          $month: '$date'
+        }
+
+      }).group({
+        _id: ['$year', '$month'],
+        incomes: {
+          $sum: '$expense',
+        },
+      }).addFields({
+        balance: {
+          $subtract: ['$incomes', 'expense']
+        }
+      })
+
+      .sort({
+        _id: 1,
+      })
     return result
   }
 }

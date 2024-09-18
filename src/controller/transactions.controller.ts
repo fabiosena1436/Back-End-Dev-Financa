@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { StatusCodes } from 'http-status-codes';
 import { TransactionsService } from '../services/trasactions.service';
-import { CreateTransactionDTO, GetDashBoarDTO, indexTransactionsDTO } from '../dtos/trasactions.dto';
+import { CreateTransactionDTO, GetDashBoarDTO, GetFinancialEvolutionDTO, indexTransactionsDTO } from '../dtos/trasactions.dto';
 
 export class TransactionsController {
   constructor(private transactionsSevices: TransactionsService) {
@@ -33,7 +33,7 @@ export class TransactionsController {
   }
 
 
-  
+
   index = async (
     req: Request<unknown, unknown, unknown, indexTransactionsDTO>,
     res: Response,
@@ -41,11 +41,11 @@ export class TransactionsController {
   ) => {
     try {
       const { title, categoryId, beginDate, endDate } = req.query
-      const result = await this.transactionsSevices.index({ 
-        title, 
-        categoryId, 
-        beginDate, 
-        endDate 
+      const result = await this.transactionsSevices.index({
+        title,
+        categoryId,
+        beginDate,
+        endDate
       });
 
       return res.status(StatusCodes.OK).json(result);
@@ -60,13 +60,31 @@ export class TransactionsController {
     next: NextFunction,
   ) => {
     try {
-      const {  beginDate, endDate } = req.query
-      const result = await this.transactionsSevices.getDashboard({ 
-        
-        beginDate, 
-        endDate 
+      const { beginDate, endDate } = req.query
+      const result = await this.transactionsSevices.getDashboard({
+
+        beginDate,
+        endDate
       });
-  
+
+      return res.status(StatusCodes.OK).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  getFinancialEvolution = async (
+    req: Request<unknown, unknown, unknown, GetFinancialEvolutionDTO>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { year } = req.query
+      const result = await this.transactionsSevices.gerFinanceialEvolution({
+
+        year,
+      });
+
       return res.status(StatusCodes.OK).json(result);
     } catch (err) {
       next(err);

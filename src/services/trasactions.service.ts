@@ -1,4 +1,4 @@
-import { GetDashBoarDTO } from './../dtos/trasactions.dto';
+import { GetDashBoarDTO, GetFinanceEvolutionDTO, GetFinancialEvolutionDTO } from './../dtos/trasactions.dto';
 
 import { CategoriesRepository } from './../database/repositories/categories.repository';
 import { CreateTransactionDTO } from '../dtos/trasactions.dto';
@@ -51,7 +51,7 @@ export class TransactionsService {
 
     async getDashboard({ beginDate, endDate }: GetDashBoarDTO): Promise<{ balance: Balance, expense: Expense[] }> {
 
-        
+
         let balance = await this.transactionsRepository.getBalance({
             beginDate,
             endDate,
@@ -74,6 +74,13 @@ export class TransactionsService {
         return { balance, expense }
     }
 
+    async gerFinanceialEvolution({
+        year,
+    }: GetFinancialEvolutionDTO): Promise<Balance[]>{
+        const financialEvolution=
+        await this.transactionsRepository.getFinancialEvolution({year})
 
+        return financialEvolution
+    }
 
 }
