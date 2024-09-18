@@ -1,3 +1,4 @@
+import { BodyRequest } from './types';
 import { NextFunction, Request, Response } from 'express';
 
 
@@ -11,7 +12,7 @@ export class CategoriesController {
   }
 
   create = async (
-    req: Request<unknown, unknown, CreateCategoyDTO>,
+    req: BodyRequest< CreateCategoyDTO>,
     res: Response,
     next: NextFunction,
   ) => {

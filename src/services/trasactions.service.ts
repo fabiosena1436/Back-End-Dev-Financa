@@ -1,4 +1,4 @@
-import { GetDashBoarDTO, GetFinanceEvolutionDTO, GetFinancialEvolutionDTO } from './../dtos/trasactions.dto';
+import { GetDashBoarDTO, GetFinancialEvolutionDTO } from './../dtos/trasactions.dto';
 
 import { CategoriesRepository } from './../database/repositories/categories.repository';
 import { CreateTransactionDTO } from '../dtos/trasactions.dto';

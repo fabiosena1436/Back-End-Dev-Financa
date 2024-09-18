@@ -1,6 +1,6 @@
 import { TransactionType } from './../../entities/trasations.entity';
 import { Expense } from './../../entities/expense.entiy';
-import { GetDashBoarDTO, indexTransactionsDTO, GetFinanceEvolutionDTO, GetFinancialEvolutionDTO } from './../../dtos/trasactions.dto';
+import { GetDashBoarDTO, indexTransactionsDTO, GetFinancialEvolutionDTO } from './../../dtos/trasactions.dto';
 
 import { Transaction } from '../../entities/trasations.entity';
 import { TransactionModel } from './../schemas/trasactions.schema';

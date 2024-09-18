@@ -1,3 +1,4 @@
+import { BodyRequest, QueryRequest } from './types';
 import { NextFunction, Request, Response } from 'express';
 
 
@@ -11,7 +12,7 @@ export class TransactionsController {
   }
 
   create = async (
-    req: Request<unknown, unknown, CreateTransactionDTO>,
+    req: BodyRequest<CreateTransactionDTO>,
     res: Response,
     next: NextFunction,
   ) => {
@@ -35,7 +36,7 @@ export class TransactionsController {
 
 
   index = async (
-    req: Request<unknown, unknown, unknown, indexTransactionsDTO>,
+    req: QueryRequest<indexTransactionsDTO>,
     res: Response,
     next: NextFunction,
   ) => {
@@ -55,7 +56,7 @@ export class TransactionsController {
   }
 
   getDashboard = async (
-    req: Request<unknown, unknown, unknown, GetDashBoarDTO>,
+    req: QueryRequest< GetDashBoarDTO>,
     res: Response,
     next: NextFunction,
   ) => {
@@ -74,7 +75,7 @@ export class TransactionsController {
   }
 
   getFinancialEvolution = async (
-    req: Request<unknown, unknown, unknown, GetFinancialEvolutionDTO>,
+    req: QueryRequest< GetFinancialEvolutionDTO>,
     res: Response,
     next: NextFunction,
   ) => {
