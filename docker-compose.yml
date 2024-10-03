@@ -12,7 +12,7 @@ services:
       - '27017:27017'
     networks:
       - local
-
+  
   app:
     depends_on:
       - mongo

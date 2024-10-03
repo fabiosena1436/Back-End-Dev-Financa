@@ -15,5 +15,3 @@ export class Category {
     this.color = color.toUpperCase();
   }
 }
-
-

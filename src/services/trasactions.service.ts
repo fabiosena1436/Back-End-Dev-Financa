@@ -1,86 +1,90 @@
-import { GetDashBoarDTO, GetFinancialEvolutionDTO } from './../dtos/trasactions.dto';
-
-import { CategoriesRepository } from './../database/repositories/categories.repository';
-import { CreateTransactionDTO } from '../dtos/trasactions.dto';
-import { TransactionRepository } from './../database/repositories/transaction.repository';
-
-import { Transaction } from './../entities/trasations.entity';
-import { AppError } from '../errors/app.errors';
 import { StatusCodes } from 'http-status-codes';
-import { Balance } from '../entities/balance.entuty';
-import { Expense } from '../entities/expense.entiy';
 
+import { CategoriesRepository } from '../database/repositories/categories.repository';
+import { TransactionsRepository } from '../database/repositories/transactions.repository';
+import {
+  CreateTransactionDTO,
+  GetDashboardDTO,
+  GetFinancialEvolutionDTO,
+  IndexTransactionsDTO,
+} from '../dtos/transactions.dto';
+import { Balance } from '../entities/balance.entity';
+import { Expense } from '../entities/expense.entity';
+import { Transaction } from '../entities/transactions.entity';
+import { AppError } from '../errors/app.error';
 
 export class TransactionsService {
-    constructor(
-        private transactionsRepository: TransactionRepository,
-        private categoriesRepository: CategoriesRepository,
-    ) { }
+  constructor(
+    private transactionsRepository: TransactionsRepository,
+    private categoriesRepository: CategoriesRepository,
+  ) {}
 
-    async create({
-        title,
-        type,
-        date,
-        categoryId,
-        amount,
-    }: CreateTransactionDTO): Promise<Transaction> {
-        const category = await this.categoriesRepository.findById(categoryId)
+  async create({
+    title,
+    type,
+    date,
+    categoryId,
+    amount,
+  }: CreateTransactionDTO): Promise<Transaction> {
+    const category = await this.categoriesRepository.findById(categoryId);
 
-        if (!category) {
-            throw new AppError('Category does not exists.', StatusCodes.NOT_FOUND)
-        }
-
-        const transaction = new Transaction({
-            title,
-            type,
-            date,
-            category,
-            amount,
-        })
-
-        const createdTransaction =
-            await this.transactionsRepository.create(transaction)
-
-        return createdTransaction
-    }
-    async index({ }): Promise<Transaction[]> {
-        const transactions = await this.transactionsRepository.index({})
-
-        return transactions
+    if (!category) {
+      throw new AppError('Category does not exists.', StatusCodes.NOT_FOUND);
     }
 
-    async getDashboard({ beginDate, endDate }: GetDashBoarDTO): Promise<{ balance: Balance, expense: Expense[] }> {
+    const transaction = new Transaction({
+      title,
+      type,
+      date,
+      category,
+      amount,
+    });
 
+    const createdTransaction =
+      await this.transactionsRepository.create(transaction);
 
-        let balance = await this.transactionsRepository.getBalance({
-            beginDate,
-            endDate,
-        })
+    return createdTransaction;
+  }
 
-        const expense = await this.transactionsRepository.getExpense({
-            beginDate,
-            endDate,
-        })
+  async index(filters: IndexTransactionsDTO): Promise<Transaction[]> {
+    const transactions = await this.transactionsRepository.index(filters);
 
-        if (!balance) {
-            balance = new Balance({
-                _id: null,
-                incomes: 0,
-                expenses: 0,
-                balance: 0,
-            })
-        }
+    return transactions;
+  }
 
-        return { balance, expense }
+  async getDashboard({
+    beginDate,
+    endDate,
+  }: GetDashboardDTO): Promise<{ balance: Balance; expenses: Expense[] }> {
+    let [balance, expenses] = await Promise.all([
+      this.transactionsRepository.getBalance({
+        beginDate,
+        endDate,
+      }),
+      this.transactionsRepository.getExpenses({
+        beginDate,
+        endDate,
+      }),
+    ]);
+
+    if (!balance) {
+      balance = new Balance({
+        _id: null,
+        incomes: 0,
+        expenses: 0,
+        balance: 0,
+      });
     }
 
-    async gerFinanceialEvolution({
-        year,
-    }: GetFinancialEvolutionDTO): Promise<Balance[]>{
-        const financialEvolution=
-        await this.transactionsRepository.getFinancialEvolution({year})
+    return { balance, expenses };
+  }
 
-        return financialEvolution
-    }
+  async getFinancialEvolution({
+    year,
+  }: GetFinancialEvolutionDTO): Promise<Balance[]> {
+    const financialEvolution =
+      await this.transactionsRepository.getFinancialEvolution({ year });
 
+    return financialEvolution;
+  }
 }

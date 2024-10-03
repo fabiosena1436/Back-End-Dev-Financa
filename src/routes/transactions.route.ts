@@ -1,51 +1,53 @@
-import { createTransactionSchema, IndexTransactionsSchema, getDaschboardSchema, getFinanceEvolutionSchema } from './../dtos/trasactions.dto';
-import { TransactionsController } from './../controller/transactions.controller';
 import { Router } from 'express';
-import { ParamnsType, validator } from '../middlewares/validetor.middleware';
-import { TransactionsFactory } from '../factories/transaction.factoriey';
 
+import { TransactionsController } from '../controllers/transactions.controller';
+import {
+  createTransactionSchema,
+  getDashboardSchema,
+  getFinancialEvolutionSchema,
+  indexTransactionsSchema,
+} from '../dtos/transactions.dto';
+import { TransactionsFactory } from '../factories/transactions.factory';
+import { ParamsType, validator } from '../middlewares/validator.middleware';
 
-export const transactionRoutes = Router();
+export const transactionsRoutes = Router();
 
-const controller = new TransactionsController(TransactionsFactory.getServiceInstance());
-
-
-transactionRoutes.post(
-    '/',
-    validator({
-        schema: createTransactionSchema,
-        type: ParamnsType.BODY
-    }),
-
-    controller.create,
+const controller = new TransactionsController(
+  TransactionsFactory.getServiceInstance(),
 );
 
-
-transactionRoutes.get('/',
-    validator({
-        schema: IndexTransactionsSchema,
-        type: ParamnsType.QUERY
-    }),
-
-    controller.index
+transactionsRoutes.post(
+  '/',
+  validator({
+    schema: createTransactionSchema,
+    type: ParamsType.BODY,
+  }),
+  controller.create,
 );
 
-transactionRoutes.get(
-    '/dashboard',
-    validator({
-        schema: getDaschboardSchema,
-        type: ParamnsType.QUERY
-    }),
-
-    controller.getDashboard,
+transactionsRoutes.get(
+  '/',
+  validator({
+    schema: indexTransactionsSchema,
+    type: ParamsType.QUERY,
+  }),
+  controller.index,
 );
 
-transactionRoutes.get(
-    '/financial-evlution',
-    validator({
-        schema: getFinanceEvolutionSchema,
-        type: ParamnsType.QUERY
-    }),
+transactionsRoutes.get(
+  '/dashboard',
+  validator({
+    schema: getDashboardSchema,
+    type: ParamsType.QUERY,
+  }),
+  controller.getDashboard,
+);
 
-    controller.getFinancialEvolution,
+transactionsRoutes.get(
+  '/financial-evolution',
+  validator({
+    schema: getFinancialEvolutionSchema,
+    type: ParamsType.QUERY,
+  }),
+  controller.getFinancialEvolution,
 );

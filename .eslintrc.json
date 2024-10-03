@@ -27,7 +27,7 @@
     "import-helpers/order-imports": [
       "warn",
       {
-        "newlineBetween": "always",
+        "newlinesBetween": "always",
         "groups": [
           "/^node:*/",
           "module",

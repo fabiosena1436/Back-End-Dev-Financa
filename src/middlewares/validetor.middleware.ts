@@ -1,31 +1,33 @@
-import { StatusCodes } from 'http-status-codes';
-import { AppError } from './../errors/app.errors';
 import { NextFunction, Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
 import { ZodRawShape, z } from 'zod';
 
-export enum ParamnsType {
+import { AppError } from '../errors/app.error';
+
+export enum ParamsType {
   QUERY = 'query',
   BODY = 'body',
 }
 
-type validateParams = {
+type ValidateParams = {
   schema: ZodRawShape;
-  type: ParamnsType;
+  type: ParamsType;
 };
 
-export function validator(params: validateParams) {
+export function validator(params: ValidateParams) {
   return (req: Request, res: Response, next: NextFunction) => {
     const result = z.object(params.schema).safeParse(req[params.type]);
 
-    if(!result.success){
+    if (!result.success) {
       const errorFormatted = result.error.issues.map(
-        (item)=>`${item.path.join('.')}: ${item.message}`,
-      )
-      throw new AppError(errorFormatted, StatusCodes.UNPROCESSABLE_ENTITY)
+        (item) => `${item.path.join('.')}: ${item.message}`,
+      );
+
+      throw new AppError(errorFormatted, StatusCodes.UNPROCESSABLE_ENTITY);
     }
 
-    req[params.type] = result.data
+    req[params.type] = result.data;
 
-    next()
+    next();
   };
 }

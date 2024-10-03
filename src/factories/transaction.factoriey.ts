@@ -1,27 +1,23 @@
-import { CategoriesRepository } from './../database/repositories/categories.repository';
-
-import { TransactionModel } from './../database/schemas/trasactions.schema';
-import { TransactionRepository } from "../database/repositories/transaction.repository"
-import { TransactionsService } from "../services/trasactions.service"
+import { CategoriesRepository } from '../database/repositories/categories.repository';
+import { TransactionsRepository } from '../database/repositories/transactions.repository';
 import { CategoryModel } from '../database/schemas/category.schema';
-
-
-
+import { TransactionModel } from '../database/schemas/transactions.schema';
+import { TransactionsService } from '../services/transactions.service';
 
 export class TransactionsFactory {
-    private static transactionsSevice: TransactionsService
+  private static transactionsService: TransactionsService;
 
-    static getServiceInstance() {
-        if (this.transactionsSevice) {
-            return this.transactionsSevice
-        }
-
-        const repository = new TransactionRepository(TransactionModel)
-        const categoryRepository = new CategoriesRepository(CategoryModel)
-        const service = new TransactionsService(repository, categoryRepository)
-
-        this.transactionsSevice = service
-
-        return service
+  static getServiceInstance() {
+    if (this.transactionsService) {
+      return this.transactionsService;
     }
+
+    const repository = new TransactionsRepository(TransactionModel);
+    const categoriesRepository = new CategoriesRepository(CategoryModel);
+    const service = new TransactionsService(repository, categoriesRepository);
+
+    this.transactionsService = service;
+
+    return service;
+  }
 }

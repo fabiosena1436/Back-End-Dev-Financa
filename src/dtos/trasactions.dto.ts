@@ -1,42 +1,41 @@
+import { z } from 'zod';
 
-import { z } from "zod";
-import { TransactionType } from "../entities/trasations.entity";
+import { TransactionType } from '../entities/transactions.entity';
 
 export const createTransactionSchema = {
-    title: z.string(),
-    amount: z.number().int().positive(),
-    type: z.nativeEnum(TransactionType),
-    date: z.coerce.date(),
-    categoryId: z.string().length(24)
-}
+  title: z.string(),
+  amount: z.number().int().positive(),
+  type: z.nativeEnum(TransactionType),
+  date: z.coerce.date(),
+  categoryId: z.string().length(24),
+};
 
-const createTransacionObject = z.object(createTransactionSchema)
-export type CreateTransactionDTO = z.infer<typeof createTransacionObject>
+const createTransactionObject = z.object(createTransactionSchema);
+export type CreateTransactionDTO = z.infer<typeof createTransactionObject>;
 
-export const IndexTransactionsSchema = {
-    title: z.string().optional(),
-    categoryId: z.string().length(24).optional(),
-    beginDate: z.coerce.date().optional(),
-    endDate: z.coerce.date().optional(),
+export const indexTransactionsSchema = {
+  title: z.string().optional(),
+  categoryId: z.string().length(24).optional(),
+  beginDate: z.coerce.date().optional(),
+  endDate: z.coerce.date().optional(),
+};
 
-}
+const indexTransactionsObject = z.object(indexTransactionsSchema);
+export type IndexTransactionsDTO = z.infer<typeof indexTransactionsObject>;
 
-const indexTransactionObject = z.object(IndexTransactionsSchema)
-export type indexTransactionsDTO = z.infer<typeof indexTransactionObject>
+export const getDashboardSchema = {
+  beginDate: z.coerce.date().optional(),
+  endDate: z.coerce.date().optional(),
+};
 
-export const getDaschboardSchema = {
-    beginDate: z.coerce.date().optional(),
-    endDate: z.coerce.date().optional(),
-}
+const getDashboardObject = z.object(getDashboardSchema);
+export type GetDashboardDTO = z.infer<typeof getDashboardObject>;
 
-const getDashboardObject = z.object(getDaschboardSchema)
-export type GetDashBoarDTO = z.infer<typeof getDashboardObject>
+export const getFinancialEvolutionSchema = {
+  year: z.string(),
+};
 
-export const getFinanceEvolutionSchema = {
-    year: z.string(),
-}
-
-const getFinanceEvolutionObject = z.object(getFinanceEvolutionSchema)
-export type GetFinancialEvolutionDTO = z.infer<typeof getFinanceEvolutionObject>
-
-
+const getFinancialEvolutionObject = z.object(getFinancialEvolutionSchema);
+export type GetFinancialEvolutionDTO = z.infer<
+  typeof getFinancialEvolutionObject
+>;

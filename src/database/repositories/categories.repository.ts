@@ -2,7 +2,7 @@ import { Category } from '../../entities/category.entity';
 import { CategoryModel } from '../schemas/category.schema';
 
 export class CategoriesRepository {
-  constructor(private model: typeof CategoryModel) { }
+  constructor(private model: typeof CategoryModel) {}
 
   async create({ title, color }: Category): Promise<Category> {
     const createdCategory = await this.model.create({ title, color });
@@ -23,10 +23,10 @@ export class CategoriesRepository {
   }
 
   async index(): Promise<Category[]> {
-    const categories = await this.model.find()
+    const categories = await this.model.find();
 
-    const categoriesMap = categories.map((item) => item.toObject<Category>())
+    const categoriesMap = categories.map((item) => item.toObject<Category>());
 
-    return categoriesMap
+    return categoriesMap;
   }
 }

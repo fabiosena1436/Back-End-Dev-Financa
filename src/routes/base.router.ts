@@ -1,4 +1,5 @@
 import { Router } from 'express';
+
 import packageJson from '../../package.json';
 
 export const baseRoutes = Router();

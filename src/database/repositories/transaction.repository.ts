@@ -1,17 +1,34 @@
-import { TransactionType } from './../../entities/trasations.entity';
-import { Expense } from './../../entities/expense.entiy';
-import { GetDashBoarDTO, indexTransactionsDTO, GetFinancialEvolutionDTO } from './../../dtos/trasactions.dto';
+import {
+  CreateTransactionDTO,
+  GetDashboardDTO,
+  GetFinancialEvolutionDTO,
+  IndexTransactionsDTO,
+} from '../../dtos/transactions.dto';
+import { Balance } from '../../entities/balance.entity';
+import { Expense } from '../../entities/expense.entity';
+import {
+  Transaction,
+  TransactionType,
+} from '../../entities/transactions.entity';
+import { TransactionModel } from '../schemas/transactions.schema';
 
-import { Transaction } from '../../entities/trasations.entity';
-import { TransactionModel } from './../schemas/trasactions.schema';
-import { Balance } from '../../entities/balance.entuty';
+export class TransactionsRepository {
+  constructor(private model: typeof TransactionModel) {}
 
-
-export class TransactionRepository {
-  constructor(private model: typeof TransactionModel) { }
-
-  async create({ title, date, amount, type, category }: Transaction): Promise<Transaction> {
-    const createdTransaction = await this.model.create({});
+  async create({
+    title,
+    date,
+    amount,
+    type,
+    category,
+  }: Transaction): Promise<Transaction> {
+    const createdTransaction = await this.model.create({
+      title,
+      date,
+      amount,
+      type,
+      category,
+    });
 
     return createdTransaction.toObject<Transaction>();
   }
@@ -20,54 +37,52 @@ export class TransactionRepository {
     title,
     categoryId,
     beginDate,
-    endDate
-  }: indexTransactionsDTO): Promise<Transaction[]> {
-    const whwreParams: Record<string, unknown> = {
+    endDate,
+  }: IndexTransactionsDTO): Promise<Transaction[]> {
+    const whereParams: Record<string, unknown> = {
       ...(title && { title: { $regex: title, $options: 'i' } }),
-      ...(categoryId && { 'category._id': categoryId })
-    }
+      ...(categoryId && { 'category._id': categoryId }),
+    };
 
     if (beginDate || endDate) {
-      whwreParams.date = {
+      whereParams.date = {
         ...(beginDate && { $gte: beginDate }),
         ...(endDate && { $lte: endDate }),
-      }
+      };
     }
 
-    const transactions = await this.model.find(whwreParams, undefined, {
+    const transactions = await this.model.find(whereParams, undefined, {
       sort: {
         date: -1,
-      }
-    })
+      },
+    });
 
     const transactionsMap = transactions.map((item) =>
-      item.toObject<Transaction>()
-    )
+      item.toObject<Transaction>(),
+    );
 
-    return transactionsMap
+    return transactionsMap;
   }
 
-  async getBalance({ beginDate, endDate }: GetDashBoarDTO): Promise<Balance> {
-    const agregate = this.model.aggregate<Balance>()
+  async getBalance({ beginDate, endDate }: GetDashboardDTO): Promise<Balance> {
+    const aggregate = this.model.aggregate<Balance>();
 
     if (beginDate || endDate) {
-      agregate.match({
+      aggregate.match({
         date: {
           ...(beginDate && { $gte: beginDate }),
           ...(endDate && { $lte: endDate }),
-        }
-      })
+        },
+      });
     }
 
-    const [result] = await agregate
-
+    const [result] = await aggregate
       .project({
         _id: 0,
         income: {
           $cond: [
             {
               $eq: ['$type', 'income'],
-
             },
             '$amount',
             0,
@@ -82,64 +97,69 @@ export class TransactionRepository {
             0,
           ],
         },
-      }).group({
+      })
+      .group({
         _id: null,
         incomes: {
+          $sum: '$income',
+        },
+        expenses: {
           $sum: '$expense',
         },
-      }).addFields({
-        balance: {
-          $subtract: ['$incomes', 'expense']
-        }
       })
-    return result
+      .addFields({
+        balance: {
+          $subtract: ['$incomes', '$expenses'],
+        },
+      });
+
+    return result;
   }
 
-  async getExpense({
+  async getExpenses({
     beginDate,
-    endDate
-  }: GetDashBoarDTO): Promise<Expense[]> {
-    const aggregate = this.model.aggregate<Expense>()
+    endDate,
+  }: GetDashboardDTO): Promise<Expense[]> {
+    const aggregate = this.model.aggregate<Expense>();
+
     const matchParams: Record<string, unknown> = {
       type: TransactionType.EXPENSE,
-    }
+    };
 
     if (beginDate || endDate) {
-
       matchParams.date = {
-
         ...(beginDate && { $gte: beginDate }),
         ...(endDate && { $lte: endDate }),
-
-      }
-
+      };
     }
 
     const result = await aggregate.match(matchParams).group({
       _id: '$category._id',
       title: {
-        $first: '$category.title'
+        $first: '$category.title',
       },
       color: {
         $first: '$category.color',
       },
       amount: {
         $sum: '$amount',
-      }
-    })
-    return result
+      },
+    });
+
+    return result;
   }
 
-  async getFinancialEvolution({ year }: GetFinancialEvolutionDTO): Promise<Balance[]> {
-    const agregate = this.model.aggregate<Balance>()
+  async getFinancialEvolution({
+    year,
+  }: GetFinancialEvolutionDTO): Promise<Balance[]> {
+    const aggregate = this.model.aggregate<Balance>();
 
-
-    const result = await agregate
+    const result = await aggregate
       .match({
         date: {
           $gte: new Date(`${year}-01-01`),
           $lte: new Date(`${year}-12-31`),
-        }
+        },
       })
       .project({
         _id: 0,
@@ -147,7 +167,6 @@ export class TransactionRepository {
           $cond: [
             {
               $eq: ['$type', 'income'],
-
             },
             '$amount',
             0,
@@ -162,28 +181,31 @@ export class TransactionRepository {
             0,
           ],
         },
-
         year: {
-          $year: '$date'
+          $year: '$date',
         },
         month: {
-          $month: '$date'
-        }
-
-      }).group({
+          $month: '$date',
+        },
+      })
+      .group({
         _id: ['$year', '$month'],
         incomes: {
+          $sum: '$income',
+        },
+        expenses: {
           $sum: '$expense',
         },
-      }).addFields({
-        balance: {
-          $subtract: ['$incomes', 'expense']
-        }
       })
-
+      .addFields({
+        balance: {
+          $subtract: ['$incomes', '$expenses'],
+        },
+      })
       .sort({
         _id: 1,
-      })
-    return result
+      });
+
+    return result;
   }
 }
