@@ -11,7 +11,7 @@ import { TransactionsService } from '../services/transactions.service';
 import { BodyRequest, QueryRequest } from './types';
 
 export class TransactionsController {
-  constructor(private transactionsService: TransactionsService) {}
+  constructor(private transactionsService: TransactionsService) { }
 
   create = async (
     req: BodyRequest<CreateTransactionDTO>,
