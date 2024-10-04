@@ -28,3 +28,9 @@
     - Não é possível criar categorias com o mesmo nome
 
 # Listar as categorias (DONE)
+
+
+
+dando start no docker 
+
+docker-compose up -d --build
